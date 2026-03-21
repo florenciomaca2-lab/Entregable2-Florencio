@@ -5,6 +5,7 @@ const gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 const form = document.getElementById("formGasto");
 const lista = document.getElementById("listaGastos");
 const totalSpan = document.getElementById("total");
+const selectOrden = document.getElementById("ordenar");
 
 // Función para agregar gasto 
 function agregarGasto(nombre, monto) {
@@ -28,9 +29,10 @@ function calcularTotal() {
 }
 
 // Función de salida
-function renderizar() {
+function renderizar(listaGastos = gastos) {
     lista.innerHTML = "";
-    gastos.forEach((gasto, index) => {
+    
+    listaGastos.forEach((gasto, index) => {
     const li = document.createElement ("li");
   
     li.innerHTML = `
@@ -47,6 +49,7 @@ function renderizar() {
 
     lista.appendChild(li);
 }),
+
     totalSpan.textContent = calcularTotal();
 }
 
@@ -62,6 +65,17 @@ form.addEventListener("submit", function(e) {
         renderizar();
         form.reset();
     }
+});
+selectOrden.addEventListener("change", () => {
+    let copia = [...gastos];
+    
+    if (selectOrden.value === "mayor") {
+        copia.sort((a,b) => b.monto - a.monto);        
+    } else if (selectOrden.value === "menor") {
+        copia.sort((a, b) => a.monto - b.monto);
+    }
+
+    renderizar(copia);
 });
 
 // Render inicial 
