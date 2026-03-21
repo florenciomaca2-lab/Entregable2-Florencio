@@ -6,6 +6,7 @@ const form = document.getElementById("formGasto");
 const lista = document.getElementById("listaGastos");
 const totalSpan = document.getElementById("total");
 const selectOrden = document.getElementById("ordenar");
+const inputFiltro = document.getElementById("filtro");
 
 // Función para agregar gasto 
 function agregarGasto(nombre, monto) {
@@ -31,7 +32,7 @@ function calcularTotal() {
 // Función de salida
 function renderizar(listaGastos = gastos) {
     lista.innerHTML = "";
-    
+
     listaGastos.forEach((gasto, index) => {
     const li = document.createElement ("li");
   
@@ -66,6 +67,7 @@ form.addEventListener("submit", function(e) {
         form.reset();
     }
 });
+
 selectOrden.addEventListener("change", () => {
     let copia = [...gastos];
     
@@ -76,6 +78,16 @@ selectOrden.addEventListener("change", () => {
     }
 
     renderizar(copia);
+});
+
+inputFiltro.addEventListener("input", () => {
+    const texto = inputFiltro.value.toLowerCase();
+
+    const filtrados = gastos.filter(gasto =>
+        gasto.nombre.toLowerCase().includes (texto)
+    );
+
+    renderizar(filtrados);
 });
 
 // Render inicial 
