@@ -7,12 +7,25 @@ const lista = document.getElementById("listaGastos");
 const totalSpan = document.getElementById("total");
 const selectOrden = document.getElementById("ordenar");
 const inputFiltro = document.getElementById("filtro");
+const selectCategoria = document.getElementById("categoria");
+
+fetch("data/categorias.json")
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.textContent = cat;
+            selectCategoria.appendChild(option);
+        });
+    });
 
 // Función para agregar gasto 
-function agregarGasto(nombre, monto) {
+function agregarGasto(nombre, monto, categoria) {
     gastos.push({
         nombre: nombre,
-        monto: monto
+        monto: monto,
+        categoria: categoria
     });
 
     localStorage.setItem("gastos", JSON.stringify(gastos));
@@ -37,19 +50,18 @@ function renderizar(listaGastos = gastos) {
     const li = document.createElement ("li");
   
     li.innerHTML = `
-        ${gasto.nombre} - $${gasto.monto}
+        ${gasto.nombre} - $${gasto.monto} - ${gasto.categoria}
         <button>ELIMINAR</button>
       `;
 
-    const boton = li.querySelector("button").addEventListener("click", () => {
-        console.log("Eliminar índice", index);
+    li.querySelector("button").addEventListener("click", () => {
         gastos.splice(index, 1);
         localStorage.setItem("gastos", JSON.stringify(gastos));
         renderizar();
     });
 
     lista.appendChild(li);
-}),
+});
 
     totalSpan.textContent = calcularTotal();
 }
@@ -60,9 +72,10 @@ form.addEventListener("submit", function(e) {
 
     const nombre = document.getElementById("nombre").value;
     const monto = Number(document.getElementById("monto").value);
+    const categoria = document.getElementById("categoria").value;
 
-    if (nombre !== "" && monto > 0) {
-        agregarGasto(nombre, monto);
+    if (nombre !== "" && monto > 0 && categoria !=="") {
+        agregarGasto(nombre, monto, categoria);
         renderizar();
         form.reset();
     }
