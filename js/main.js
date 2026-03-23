@@ -1,4 +1,3 @@
-// Array principal 
 const gastos = JSON.parse(localStorage.getItem("gastos")) || [];
 
 // Elementos del DOM
@@ -18,6 +17,8 @@ fetch("data/categorias.json")
             option.textContent = cat;
             selectCategoria.appendChild(option);
         });
+
+        renderizar ();
     });
 
 // Función para agregar gasto 
@@ -64,6 +65,48 @@ function renderizar(listaGastos = gastos) {
 });
 
     totalSpan.textContent = calcularTotal();
+    renderizarGrafico();
+}
+
+// Grafico
+let grafico;
+
+function renderizarGrafico(){
+    const categorias = {};
+
+    gastos.forEach(gasto => {
+        if (categorias [gasto.categoria]) {
+            categorias [gasto.categoria] += gasto.monto;
+        } else {
+            categorias [gasto.categoria] = gasto.monto;
+        }
+    });
+    
+    const labels = Object.keys(categorias);
+    const data = Object.values(categorias);
+
+    const ctx = document.getElementById("grafico").getContext("2d");
+
+    if (grafico) {
+        grafico.destroy();
+    }
+
+    grafico = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    "#ff7aa2",
+                    "#a29bfe",
+                    "#74c0fc",
+                    "#63e6be",
+                    "#ffd43b"
+                 ]    
+            }]
+        }
+    });
 }
 
 // Evento 
